@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Edit2, Save, XCircle, Clock, Building, Eye, EyeOff } from "lucide-react";
+import { X, Clock, Building, Eye, EyeOff } from "lucide-react";
 import MerchItemEditor from "./MerchItemEditor";
 import ComboEditor from "./ComboEditor";
 import ApprovalActions from "./ApprovalActions";
@@ -35,25 +35,14 @@ function getStatusBadge(status, visibility) {
 
 export default function BundleDetailModal({
   bundle,
-  editingBundle,
-  isEditing,
   approving,
   togglingVisibility,
-  saving,
   onClose,
-  onStartEditing,
-  onCancelEditing,
-  onSaveEditing,
-  onMerchItemsChange,
-  onCombosChange,
   onApproveVisible,
   onApproveHidden,
   onToggleVisibility,
-  onSaveChanges,
 }) {
   if (!bundle) return null;
-
-  const displayBundle = isEditing ? editingBundle : bundle;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -64,41 +53,12 @@ export default function BundleDetailModal({
             <h2 className="text-xl font-bold text-gray-900">{bundle.title}</h2>
             {getStatusBadge(bundle.approvalStatus, bundle.visibility)}
           </div>
-          <div className="flex items-center space-x-2">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={onSaveEditing}
-                  disabled={saving}
-                  className="flex items-center px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm disabled:opacity-50"
-                >
-                  <Save className="w-4 h-4 mr-1" />
-                  {saving ? "Saving..." : "Save"}
-                </button>
-                <button
-                  onClick={onCancelEditing}
-                  className="flex items-center px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
-                >
-                  <XCircle className="w-4 h-4 mr-1" />
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={onStartEditing}
-                className="flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm"
-              >
-                <Edit2 className="w-4 h-4 mr-1" />
-                Edit
-              </button>
-            )}
-            <button
-              onClick={onClose}
-              className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Bundle Info */}
@@ -133,9 +93,7 @@ export default function BundleDetailModal({
 
         {/* Merch Items */}
         <MerchItemEditor
-          items={displayBundle?.merchItems || []}
-          isEditing={isEditing}
-          onChange={onMerchItemsChange}
+          items={bundle.merchItems || []}
         />
 
         {/* Size Charts */}
@@ -145,15 +103,23 @@ export default function BundleDetailModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {bundle.sizeCharts.map((chart, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
-                  <img
-                    src={chart}
-                    alt={`Size Chart ${index + 1}`}
-                    className="w-full h-auto"
-                    onError={(e) => {
-                      e.target.src =
-                        "https://via.placeholder.com/400x300?text=Size+Chart+Not+Found";
-                    }}
-                  />
+                  {chart ? (
+                    <img
+                      src={chart}
+                      alt={`Size Chart ${index + 1}`}
+                      className="w-full h-auto"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-500 text-sm font-medium"
+                    style={{ display: chart ? 'none' : 'flex' }}
+                  >
+                    Size Chart Not Found
+                  </div>
                 </div>
               ))}
             </div>
@@ -162,23 +128,17 @@ export default function BundleDetailModal({
 
         {/* Combos */}
         <ComboEditor
-          combos={displayBundle?.combos || []}
-          isEditing={isEditing}
-          onChange={onCombosChange}
+          combos={bundle.combos || []}
         />
 
         {/* Approval Actions */}
         <ApprovalActions
           bundle={bundle}
-          isEditing={isEditing}
           approving={approving}
           togglingVisibility={togglingVisibility}
-          saving={saving}
-          hasBeenEdited={bundle.hasBeenEdited}
           onApproveVisible={onApproveVisible}
           onApproveHidden={onApproveHidden}
           onToggleVisibility={onToggleVisibility}
-          onSaveChanges={onSaveChanges}
         />
       </div>
     </div>

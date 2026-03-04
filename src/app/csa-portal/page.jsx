@@ -25,14 +25,9 @@ export default function CSAPortalPage() {
   const [selectedBundle, setSelectedBundle] = useState(null);
   const [showBundleDetails, setShowBundleDetails] = useState(false);
 
-  // Editing state
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingBundle, setEditingBundle] = useState(null);
-
   // Action state
   const [approving, setApproving] = useState(false);
   const [togglingVisibility, setTogglingVisibility] = useState(false);
-  const [saving, setSaving] = useState(false);
 
   // ---------- API helpers ----------
 
@@ -91,64 +86,7 @@ export default function CSAPortalPage() {
     }
   };
 
-  const saveEditedBundle = async () => {
-    if (!editingBundle) return;
-    try {
-      setSaving(true);
-      setError("");
-      await api.put(`/api/merch/csa/bundles/${selectedBundle._id}`, {
-        merchItems: editingBundle.merchItems,
-        combos: editingBundle.combos,
-      });
-      setSuccess("Bundle updated successfully");
-      setIsEditing(false);
-      setEditingBundle(null);
-      await fetchBundles();
-      // Refresh selected bundle
-      const res = await api.get("/api/merch/csa/bundles");
-      const all = res.data.bundles || res.data;
-      const updated = all.find((b) => b._id === selectedBundle._id);
-      if (updated) setSelectedBundle(updated);
-    } catch (err) {
-      setError(err.userMessage || "Failed to save changes");
-    } finally {
-      setSaving(false);
-    }
-  };
 
-  const saveChangesToApprovedBundle = async () => {
-    if (!selectedBundle) return;
-    try {
-      setSaving(true);
-      setError("");
-      await api.put(`/api/merch/csa/bundles/${selectedBundle._id}`, {
-        merchItems: selectedBundle.merchItems,
-        combos: selectedBundle.combos,
-      });
-      setSuccess("Changes saved successfully");
-      await fetchBundles();
-      const res = await api.get("/api/merch/csa/bundles");
-      const all = res.data.bundles || res.data;
-      const updated = all.find((b) => b._id === selectedBundle._id);
-      if (updated) setSelectedBundle(updated);
-    } catch (err) {
-      setError(err.userMessage || "Failed to save changes");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // ---------- Editing helpers ----------
-
-  const startEditing = () => {
-    setEditingBundle(JSON.parse(JSON.stringify(selectedBundle)));
-    setIsEditing(true);
-  };
-
-  const cancelEditing = () => {
-    setIsEditing(false);
-    setEditingBundle(null);
-  };
 
   // ---------- Filtered bundles ----------
 
@@ -182,15 +120,11 @@ export default function CSAPortalPage() {
   const viewBundleDetails = (bundle) => {
     setSelectedBundle(bundle);
     setShowBundleDetails(true);
-    setIsEditing(false);
-    setEditingBundle(null);
   };
 
   const closeBundleDetails = () => {
     setShowBundleDetails(false);
     setSelectedBundle(null);
-    setIsEditing(false);
-    setEditingBundle(null);
   };
 
   // ---------- Render ----------
@@ -266,25 +200,12 @@ export default function CSAPortalPage() {
       {showBundleDetails && selectedBundle && (
         <BundleDetailModal
           bundle={selectedBundle}
-          editingBundle={editingBundle}
-          isEditing={isEditing}
           approving={approving}
           togglingVisibility={togglingVisibility}
-          saving={saving}
           onClose={closeBundleDetails}
-          onStartEditing={startEditing}
-          onCancelEditing={cancelEditing}
-          onSaveEditing={saveEditedBundle}
-          onMerchItemsChange={(items) =>
-            setEditingBundle((prev) => ({ ...prev, merchItems: items }))
-          }
-          onCombosChange={(combos) =>
-            setEditingBundle((prev) => ({ ...prev, combos }))
-          }
           onApproveVisible={() => approveBundle(selectedBundle._id, true)}
           onApproveHidden={() => approveBundle(selectedBundle._id, false)}
           onToggleVisibility={() => toggleBundleVisibility(selectedBundle._id)}
-          onSaveChanges={saveChangesToApprovedBundle}
         />
       )}
 

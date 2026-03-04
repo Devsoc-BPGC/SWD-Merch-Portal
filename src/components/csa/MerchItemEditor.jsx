@@ -1,19 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
-
-export default function MerchItemEditor({ items, isEditing, onChange }) {
-  const updateItem = (index, field, value) => {
-    const updated = items.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
-    );
-    onChange(updated);
-  };
-
-  const removeItem = (index) => {
-    onChange(items.filter((_, i) => i !== index));
-  };
-
+export default function MerchItemEditor({ items }) {
   if (!items || items.length === 0) return null;
 
   return (
@@ -23,67 +10,45 @@ export default function MerchItemEditor({ items, isEditing, onChange }) {
         {items.map((item, index) => (
           <div key={index} className="border border-gray-200 rounded-lg p-4 relative">
             <div className="aspect-square mb-3">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-full object-cover rounded-lg"
-                onError={(e) => {
-                  e.target.src =
-                    "https://via.placeholder.com/300x300?text=Image+Not+Found";
-                }}
-              />
+              {item.image ? (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover rounded-lg"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div
+                className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 text-sm font-medium"
+                style={{ display: item.image ? 'none' : 'flex' }}
+              >
+                Image Not Found
+              </div>
             </div>
 
-            {isEditing ? (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={item.name}
-                  onChange={(e) => updateItem(index, "name", e.target.value)}
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                <input
-                  type="number"
-                  value={item.price}
-                  onChange={(e) =>
-                    updateItem(index, "price", parseFloat(e.target.value))
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  step="0.01"
-                  min="0"
-                />
-                <textarea
-                  value={item.description || ""}
-                  onChange={(e) =>
-                    updateItem(index, "description", e.target.value)
-                  }
-                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  rows="2"
-                  placeholder="Description"
-                />
-                <button
-                  onClick={() => removeItem(index)}
-                  className="w-full px-2 py-1 text-red-600 hover:bg-red-100 rounded text-sm flex items-center justify-center"
-                >
-                  <X className="w-3 h-3 mr-1" />
-                  Remove
-                </button>
-              </div>
-            ) : (
-              <>
-                <h4 className="font-semibold text-gray-900 mb-2">{item.name}</h4>
-                <p className="text-lg font-bold text-green-600 mb-2">
-                  ₹{item.price}
-                </p>
-                {item.nick && (
-                  <span className="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full mb-2">
-                    Nick Option
+            <h4 className="font-semibold text-gray-900 mb-2">{item.name}</h4>
+            <p className="text-lg font-bold text-green-600 mb-2">
+              ₹{item.price}
+            </p>
+            {item.nick && (
+              <span className="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full mb-2">
+                Nick Option (+₹{item.nickPrice})
+              </span>
+            )}
+            {item.sizes && item.sizes.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {item.sizes.map((size) => (
+                  <span key={size} className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">
+                    {size}
                   </span>
-                )}
-                {item.description && (
-                  <p className="text-sm text-gray-600">{item.description}</p>
-                )}
-              </>
+                ))}
+              </div>
+            )}
+            {item.description && (
+              <p className="text-sm text-gray-600">{item.description}</p>
             )}
           </div>
         ))}
