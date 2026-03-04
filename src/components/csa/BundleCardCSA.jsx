@@ -1,3 +1,5 @@
+"use client";
+
 import { Clock, Building, Edit2, Eye, EyeOff } from "lucide-react";
 
 function getStatusBadge(status, visibility) {

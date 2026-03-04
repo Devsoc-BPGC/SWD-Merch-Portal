@@ -19,16 +19,19 @@ export default function OrdersModal({ bundleId, allBundles, onClose }) {
   const [orders, setOrders] = useState([]);
   const [bundle, setBundle] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
+        setError("");
         const res = await api.get(`/api/orders/club/bundles/${bundleId}/orders`);
         setOrders(res.data.data.orders);
         setBundle(res.data.data.bundle);
       } catch (err) {
         console.error("Failed to fetch orders", err);
+        setError(err.userMessage || "Failed to load orders");
       } finally {
         setLoading(false);
       }
@@ -135,6 +138,10 @@ export default function OrdersModal({ bundleId, allBundles, onClose }) {
     >
       {loading ? (
         <Spinner className="w-8 h-8" />
+      ) : error ? (
+        <div className="flex items-center p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+        </div>
       ) : (
         <OrdersTable orders={orders} bundle={bundle} allBundles={allBundles} />
       )}

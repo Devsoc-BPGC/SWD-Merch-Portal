@@ -1,3 +1,5 @@
+"use client";
+
 export default function OrdersTable({ orders, bundle, allBundles = [] }) {
   const merchItems =
     bundle?.merchItems ||

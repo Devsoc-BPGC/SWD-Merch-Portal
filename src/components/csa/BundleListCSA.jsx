@@ -1,3 +1,5 @@
+"use client";
+
 import { Package } from "lucide-react";
 import Spinner from "@/components/ui/Spinner";
 import BundleCardCSA from "./BundleCardCSA";
