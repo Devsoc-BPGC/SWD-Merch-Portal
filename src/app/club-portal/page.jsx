@@ -12,7 +12,7 @@ export default function ClubPortalPage() {
   const { user, logout } = useAuth();
 
   const [bundles, setBundles] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
