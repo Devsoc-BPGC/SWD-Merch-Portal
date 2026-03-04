@@ -81,7 +81,7 @@ export default function OrdersTable({ orders, bundle, allBundles = [] }) {
                     {totalQuantity > 0 ? `${totalQuantity} items` : "0 items"}
                   </div>
                   <div className="text-xs text-blue-600">
-                    {totalRevenue > 0 ? `\u20b9${totalRevenue}` : "\u20b90"}
+                    {totalRevenue > 0 ? `₹${totalRevenue}` : "₹0"}
                   </div>
                 </td>
               );
@@ -93,7 +93,7 @@ export default function OrdersTable({ orders, bundle, allBundles = [] }) {
             </td>
             <td className="px-6 py-3">
               <div className="text-sm font-bold text-blue-900">
-                \u20b9{orders.reduce((s, o) => s + o.totalPrice, 0)}
+                ₹{orders.reduce((s, o) => s + o.totalPrice, 0)}
               </div>
             </td>
             <td className="px-6 py-3">
@@ -140,7 +140,7 @@ export default function OrdersTable({ orders, bundle, allBundles = [] }) {
                             </span>
                           )}
                         </div>
-                        <div className="text-gray-500 text-xs">\u20b9{orderItem.price}</div>
+                        <div className="text-gray-500 text-xs">₹{orderItem.price}</div>
                         {orderItem.nick && (
                           <div className="mt-1">
                             <span className="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">
@@ -161,7 +161,7 @@ export default function OrdersTable({ orders, bundle, allBundles = [] }) {
                     <div className="space-y-1">
                       {order.combos.map((combo, ci) => (
                         <div key={ci} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
-                          {combo.comboName} (x{combo.quantity}) - \u20b9{combo.price}
+                          {combo.comboName} (x{combo.quantity}) - ₹{combo.price}
                         </div>
                       ))}
                     </div>
@@ -171,7 +171,7 @@ export default function OrdersTable({ orders, bundle, allBundles = [] }) {
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-bold text-gray-900">\u20b9{order.totalPrice}</div>
+                <div className="text-sm font-bold text-gray-900">₹{order.totalPrice}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {new Date(order.createdAt).toLocaleString()}

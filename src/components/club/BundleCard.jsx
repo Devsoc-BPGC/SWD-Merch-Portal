@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, Edit2 } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 
 function getStatusBadge(status, visibility) {
@@ -10,13 +10,30 @@ function getStatusBadge(status, visibility) {
   return null;
 }
 
-export default function BundleCard({ bundle, orderCount = 0, onViewOrders, ordersLoading }) {
+export default function BundleCard({
+  bundle,
+  orderCount = 0,
+  onViewOrders,
+  onViewDetails,
+  onEdit,
+  ordersLoading,
+}) {
   return (
     <div className="border border-gray-200 rounded-lg p-4">
       <div className="flex items-start justify-between mb-3">
-        <div>
-          <h3 className="font-semibold text-lg">{bundle.title}</h3>
-          <p className="text-sm text-gray-600">{bundle.description}</p>
+        <div className="flex items-start space-x-3">
+          {/* Thumbnail of first merch item */}
+          {bundle.merchItems.length > 0 && bundle.merchItems[0].image && (
+            <img
+              src={bundle.merchItems[0].image}
+              alt={bundle.merchItems[0].name}
+              className="w-14 h-14 object-cover rounded-lg flex-shrink-0"
+            />
+          )}
+          <div>
+            <h3 className="font-semibold text-lg">{bundle.title}</h3>
+            <p className="text-sm text-gray-600 line-clamp-2">{bundle.description}</p>
+          </div>
         </div>
         {getStatusBadge(bundle.approvalStatus, bundle.visibility)}
       </div>
@@ -48,7 +65,28 @@ export default function BundleCard({ bundle, orderCount = 0, onViewOrders, order
         </div>
       )}
 
-      <div className="mt-3 pt-3 border-t border-gray-200">
+      <div className="mt-3 pt-3 border-t border-gray-200 flex flex-wrap gap-2">
+        {/* View Details */}
+        <button
+          onClick={() => onViewDetails(bundle)}
+          className="flex items-center space-x-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+        >
+          <Eye className="w-4 h-4" />
+          <span>View Details</span>
+        </button>
+
+        {/* Edit — only for pending bundles */}
+        {bundle.approvalStatus === "pending" && onEdit && (
+          <button
+            onClick={() => onEdit(bundle)}
+            className="flex items-center space-x-1 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 text-sm"
+          >
+            <Edit2 className="w-4 h-4" />
+            <span>Edit</span>
+          </button>
+        )}
+
+        {/* View Orders */}
         <button
           onClick={() => onViewOrders(bundle._id)}
           disabled={ordersLoading}

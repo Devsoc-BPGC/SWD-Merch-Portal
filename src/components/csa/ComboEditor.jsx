@@ -73,7 +73,7 @@ export default function ComboEditor({ combos, isEditing, onChange }) {
               <>
                 <h4 className="font-semibold text-gray-900 mb-2">{combo.name}</h4>
                 <p className="text-lg font-bold text-green-600 mb-2">
-                  \u20b9{combo.comboPrice}
+                  ₹{combo.comboPrice}
                 </p>
                 {combo.description && (
                   <p className="text-sm text-gray-600 mb-3">{combo.description}</p>

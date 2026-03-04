@@ -6,6 +6,7 @@ import useAuth from "@/hooks/useAuth";
 import api from "@/lib/api";
 import CreateBundleForm from "@/components/club/CreateBundleForm";
 import BundleList from "@/components/club/BundleList";
+import BundleDetailModal from "@/components/club/BundleDetailModal";
 import OrdersModal from "@/components/club/OrdersModal";
 
 export default function ClubPortalPage() {
@@ -20,6 +21,9 @@ export default function ClubPortalPage() {
   const [ordersModalBundleId, setOrdersModalBundleId] = useState(null);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [bundleOrderCounts, setBundleOrderCounts] = useState({});
+
+  // Detail / Edit modal
+  const [selectedBundle, setSelectedBundle] = useState(null);
 
   // Fetch bundles
   const fetchBundles = useCallback(async () => {
@@ -71,6 +75,37 @@ export default function ClubPortalPage() {
   // View orders
   const handleViewOrders = (bundleId) => {
     setOrdersModalBundleId(bundleId);
+  };
+
+  // View bundle details
+  const handleViewDetails = (bundle) => {
+    setSelectedBundle(bundle);
+  };
+
+  // Edit bundle (opens detail modal in edit mode — same entry point)
+  const handleEditBundle = (bundle) => {
+    if (bundle.approvalStatus === "approved") return;
+    setSelectedBundle(bundle);
+  };
+
+  // Update bundle via PUT
+  const handleUpdateBundle = async (bundleId, formData) => {
+    try {
+      const res = await api.put(
+        `/api/merch/club/bundles/${bundleId}`,
+        formData
+      );
+      const updatedBundle = res.data.data.bundle;
+      setBundles((prev) =>
+        prev.map((b) => (b._id === bundleId ? updatedBundle : b))
+      );
+      setSelectedBundle(updatedBundle);
+      setSuccess("Bundle updated successfully!");
+      return true;
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to update bundle");
+      return false;
+    }
   };
 
   // Clear messages after 5s
@@ -148,10 +183,22 @@ export default function ClubPortalPage() {
               loading={loading}
               bundleOrderCounts={bundleOrderCounts}
               onViewOrders={handleViewOrders}
+              onViewDetails={handleViewDetails}
+              onEdit={handleEditBundle}
               ordersLoading={ordersLoading}
             />
           </div>
         </div>
+
+        {/* Bundle Detail / Edit Modal */}
+        {selectedBundle && (
+          <BundleDetailModal
+            bundle={selectedBundle}
+            onClose={() => setSelectedBundle(null)}
+            onBundleUpdated={handleUpdateBundle}
+            onSetError={setError}
+          />
+        )}
 
         {/* Orders Modal */}
         {ordersModalBundleId && (

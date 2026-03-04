@@ -8,6 +8,8 @@ export default function BundleList({
   loading,
   bundleOrderCounts,
   onViewOrders,
+  onViewDetails,
+  onEdit,
   ordersLoading,
 }) {
   return (
@@ -31,6 +33,8 @@ export default function BundleList({
               bundle={bundle}
               orderCount={bundleOrderCounts[bundle._id] || 0}
               onViewOrders={onViewOrders}
+              onViewDetails={onViewDetails}
+              onEdit={onEdit}
               ordersLoading={ordersLoading}
             />
           ))}

@@ -73,7 +73,7 @@ export default function MerchItemEditor({ items, isEditing, onChange }) {
               <>
                 <h4 className="font-semibold text-gray-900 mb-2">{item.name}</h4>
                 <p className="text-lg font-bold text-green-600 mb-2">
-                  \u20b9{item.price}
+                  ₹{item.price}
                 </p>
                 {item.nick && (
                   <span className="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full mb-2">
