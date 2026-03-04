@@ -1,7 +1,19 @@
-// GET /api/auth/me
-// TODO: Port from auth.controller.js getMe()
 import { NextResponse } from "next/server";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(request) {
-  return NextResponse.json({ message: "Not implemented" }, { status: 501 });
+  try {
+    const user = await authenticateRequest(request);
+
+    return NextResponse.json({
+      success: true,
+      data: { user },
+    });
+  } catch (error) {
+    console.error("Get profile error:", error);
+    return NextResponse.json(
+      { success: false, message: error.message || "Invalid or expired token" },
+      { status: 401 }
+    );
+  }
 }
