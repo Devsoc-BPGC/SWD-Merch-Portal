@@ -1,5 +1,9 @@
-// Club portal layout — auth guard (club role)
-// TODO: Add AuthGuard wrapper
+import AuthGuard from "@/components/auth/AuthGuard";
+
+export const metadata = {
+  title: "Club Portal | SWD Merch Portal",
+};
+
 export default function ClubPortalLayout({ children }) {
-  return <>{children}</>;
+  return <AuthGuard allowedRoles={["club"]}>{children}</AuthGuard>;
 }
