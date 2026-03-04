@@ -8,6 +8,22 @@ const api = axios.create({
   timeout: 30000, // 30s timeout — allows for image uploads
 });
 
+/**
+ * Check if a JWT token is expired by decoding the payload client-side.
+ */
+function isTokenExpired(token) {
+  if (!token) return true;
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const payload = JSON.parse(atob(base64));
+    if (!payload.exp) return true;
+    return Date.now() >= payload.exp * 1000;
+  } catch {
+    return true;
+  }
+}
+
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
@@ -16,6 +32,16 @@ api.interceptors.request.use(
         if (stored) {
           const parsed = JSON.parse(stored);
           if (parsed?.token) {
+            // Check expiry BEFORE sending the request
+            if (isTokenExpired(parsed.token)) {
+              localStorage.removeItem("swd_user");
+              if (!window.location.pathname.startsWith("/login")) {
+                window.location.href = "/login";
+              }
+              return Promise.reject(
+                new axios.Cancel("Token expired. Redirecting to login.")
+              );
+            }
             config.headers.Authorization = `Bearer ${parsed.token}`;
           }
         }
