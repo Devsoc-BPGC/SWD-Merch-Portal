@@ -37,7 +37,8 @@ export default function CSAPortalPage() {
       setError("");
       const params = statusFilter !== "all" ? { status: statusFilter } : {};
       const res = await api.get("/api/merch/csa/bundles", { params });
-      setBundles(res.data.bundles || res.data);
+      const raw = res.data?.data?.bundles ?? res.data?.bundles ?? res.data;
+      setBundles(Array.isArray(raw) ? raw : []);
     } catch (err) {
       setError(err.userMessage || "Failed to fetch bundles");
     } finally {
@@ -55,8 +56,8 @@ export default function CSAPortalPage() {
       // Update selected bundle in modal
       if (selectedBundle?._id === bundleId) {
         const res = await api.get("/api/merch/csa/bundles");
-        const all = res.data.bundles || res.data;
-        const updated = all.find((b) => b._id === bundleId);
+        const all = res.data?.data?.bundles ?? res.data?.bundles ?? [];
+        const updated = Array.isArray(all) ? all.find((b) => b._id === bundleId) : null;
         if (updated) setSelectedBundle(updated);
       }
     } catch (err) {
@@ -75,8 +76,8 @@ export default function CSAPortalPage() {
       await fetchBundles();
       if (selectedBundle?._id === bundleId) {
         const res = await api.get("/api/merch/csa/bundles");
-        const all = res.data.bundles || res.data;
-        const updated = all.find((b) => b._id === bundleId);
+        const all = res.data?.data?.bundles ?? res.data?.bundles ?? [];
+        const updated = Array.isArray(all) ? all.find((b) => b._id === bundleId) : null;
         if (updated) setSelectedBundle(updated);
       }
     } catch (err) {
@@ -90,7 +91,7 @@ export default function CSAPortalPage() {
 
   // ---------- Filtered bundles ----------
 
-  const filteredBundles = bundles.filter((bundle) => {
+  const filteredBundles = (Array.isArray(bundles) ? bundles : []).filter((bundle) => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
