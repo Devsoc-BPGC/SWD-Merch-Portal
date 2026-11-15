@@ -210,7 +210,7 @@ export default function BundleDetailModal({
                       <img
                         src={chart}
                         alt={`Size Chart ${index + 1}`}
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform"
+                        className="w-full max-h-96 object-contain bg-white group-hover:scale-[1.02] transition-transform"
                       />
                     </div>
                   ))}

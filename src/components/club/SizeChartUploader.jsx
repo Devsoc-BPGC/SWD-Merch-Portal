@@ -71,7 +71,7 @@ export default function SizeChartUploader({ sizeCharts, onChange, onSetError }) 
         </div>
         {preview && (
           <div className="mt-3 flex items-center space-x-2">
-            <img src={preview} alt="Size Chart" className="w-20 h-20 object-cover rounded" />
+            <img src={preview} alt="Size Chart" className="w-28 h-28 object-contain bg-white rounded border" />
             <button
               onClick={() => setPreview("")}
               className="p-1 text-red-600 hover:bg-red-100 rounded"
@@ -89,7 +89,7 @@ export default function SizeChartUploader({ sizeCharts, onChange, onSetError }) 
               key={index}
               className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
             >
-              <img src={chart} alt="Size Chart" className="w-16 h-16 object-cover rounded" />
+              <img src={chart} alt="Size Chart" className="w-24 h-24 object-contain bg-white rounded border" />
               <button
                 onClick={() => removeChart(index)}
                 className="p-1 text-red-600 hover:bg-red-100 rounded"
