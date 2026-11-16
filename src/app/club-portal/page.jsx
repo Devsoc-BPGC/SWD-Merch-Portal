@@ -65,7 +65,13 @@ export default function ClubPortalPage() {
       setBundleOrderCounts((prev) => ({ ...prev, [newBundle._id]: 0 }));
       return true;
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create bundle");
+      const data = err.response?.data;
+      const detail = data?.error || data?.errors?.[0]?.message;
+      setError(
+        detail
+          ? `${data?.message || "Failed to create bundle"}: ${detail}`
+          : data?.message || "Failed to create bundle"
+      );
       return false;
     } finally {
       setLoading(false);

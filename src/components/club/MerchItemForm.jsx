@@ -65,10 +65,25 @@ export default function MerchItemForm({ onAdd, editingItem, onSetError }) {
       return;
     }
 
+    const price = parseFloat(form.price);
+    const nickPrice = form.nick ? parseFloat(form.nickPrice) : 0;
+    if (Number.isNaN(price) || price < 0) {
+      onSetError("Please enter a valid price");
+      return;
+    }
+    if (form.nick && (Number.isNaN(nickPrice) || nickPrice < 0)) {
+      onSetError("Please provide a valid nick price");
+      return;
+    }
+
     onAdd({
-      ...form,
-      price: parseFloat(form.price),
-      nickPrice: form.nick ? parseFloat(form.nickPrice) : undefined,
+      name: form.name.trim(),
+      description: form.description || "",
+      image: form.image,
+      sizes: form.sizes,
+      nick: !!form.nick,
+      price,
+      nickPrice,
     });
 
     setForm({ name: "", price: "", description: "", image: "", nick: false, nickPrice: "", sizes: [] });
