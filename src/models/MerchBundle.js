@@ -141,23 +141,20 @@ merchBundleSchema.methods.toggleVisibility = function () {
   return this.save();
 };
 
-merchBundleSchema.pre("save", function (next) {
+merchBundleSchema.pre("save", function () {
   if (this.combos && this.combos.length > 0) {
     const itemNames = this.merchItems.map((item) => item.name);
 
     for (const combo of this.combos) {
       for (const itemName of combo.items) {
         if (!itemNames.includes(itemName)) {
-          return next(
-            new Error(
-              `Combo "${combo.name}" contains item "${itemName}" that doesn't exist in merch items`
-            )
+          throw new Error(
+            `Combo "${combo.name}" contains item "${itemName}" that doesn't exist in merch items`
           );
         }
       }
     }
   }
-  next();
 });
 
 merchBundleSchema.set("toJSON", { virtuals: true });
