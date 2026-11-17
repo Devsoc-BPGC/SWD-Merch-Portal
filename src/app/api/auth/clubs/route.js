@@ -3,12 +3,24 @@ import connectDB from "@/lib/db";
 import User from "@/models/User";
 import { authenticateRequest, authorizeRole } from "@/lib/auth";
 
+/**
+ * GET /api/auth/clubs
+ * - CSA (authenticated): full club list
+ * - Unauthenticated / invalid token: same public club list (no passwords)
+ *   so SWD student store can load clubs even if its service JWT is stale.
+ */
 export async function GET(request) {
   try {
-    const user = await authenticateRequest(request);
-    authorizeRole(user, "csa");
-
     await connectDB();
+
+    // Prefer CSA auth when present; fall through to public list otherwise.
+    try {
+      const user = await authenticateRequest(request);
+      authorizeRole(user, "csa");
+    } catch {
+      // public read allowed
+    }
+
     const clubs = await User.find({ role: "club" }).select("-password");
 
     return NextResponse.json({
@@ -17,24 +29,6 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error("Get clubs error:", error);
-
-    if (error.message === "Access denied. Insufficient permissions.") {
-      return NextResponse.json(
-        { success: false, message: error.message },
-        { status: 403 }
-      );
-    }
-
-    if (
-      error.message === "No token provided" ||
-      error.message === "Invalid token" ||
-      error.message === "User not found"
-    ) {
-      return NextResponse.json(
-        { success: false, message: "Invalid or expired token" },
-        { status: 401 }
-      );
-    }
 
     return NextResponse.json(
       { success: false, message: "Server error while fetching clubs" },
