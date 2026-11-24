@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Upload, Loader2, X } from "lucide-react";
 import { uploadMerchImage } from "@/lib/firebase";
 
@@ -9,6 +9,7 @@ const SIZE_OPTIONS = [
 ];
 
 export default function MerchItemForm({ onAdd, editingItem, onSetError }) {
+  const inputId = useId();
   const [form, setForm] = useState(
     editingItem
       ? {
@@ -35,6 +36,7 @@ export default function MerchItemForm({ onAdd, editingItem, onSetError }) {
 
   const handleImageSelect = async (e) => {
     const file = e.target.files[0];
+    e.target.value = "";
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       onSetError("Please select a valid image file");
@@ -45,7 +47,7 @@ export default function MerchItemForm({ onAdd, editingItem, onSetError }) {
       const url = await uploadMerchImage(file);
       setForm((prev) => ({ ...prev, image: url }));
     } catch (err) {
-      onSetError(err.message);
+      onSetError(err.message || "Failed to upload image");
     } finally {
       setUploading(false);
     }
@@ -190,10 +192,10 @@ export default function MerchItemForm({ onAdd, editingItem, onSetError }) {
             accept="image/*"
             onChange={handleImageSelect}
             className="hidden"
-            id="merch-image-upload"
+            id={inputId}
           />
           <label
-            htmlFor="merch-image-upload"
+            htmlFor={inputId}
             className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer"
           >
             {uploading ? (

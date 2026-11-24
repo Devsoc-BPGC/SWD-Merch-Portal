@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Upload, Loader2, X, Trash2 } from "lucide-react";
 import { uploadSizeChart } from "@/lib/firebase";
 
 export default function SizeChartUploader({ sizeCharts, onChange, onSetError }) {
+  const inputId = useId();
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState("");
 
   const handleSelect = async (e) => {
     const file = e.target.files[0];
+    e.target.value = "";
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       onSetError("Please select a valid image file");
@@ -20,7 +22,7 @@ export default function SizeChartUploader({ sizeCharts, onChange, onSetError }) 
       const url = await uploadSizeChart(file);
       setPreview(url);
     } catch (err) {
-      onSetError(err.message);
+      onSetError(err.message || "Failed to upload size chart");
     } finally {
       setUploading(false);
     }
@@ -47,10 +49,10 @@ export default function SizeChartUploader({ sizeCharts, onChange, onSetError }) 
             accept="image/*"
             onChange={handleSelect}
             className="hidden"
-            id="size-chart-upload"
+            id={inputId}
           />
           <label
-            htmlFor="size-chart-upload"
+            htmlFor={inputId}
             className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer"
           >
             {uploading ? (
