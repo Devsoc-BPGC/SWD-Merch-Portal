@@ -18,9 +18,15 @@ export default function BundleEditForm({
   const [form, setForm] = useState({
     title: bundle.title || "",
     description: bundle.description || "",
-    merchItems: bundle.merchItems ? [...bundle.merchItems] : [],
-    sizeCharts: bundle.sizeCharts ? [...bundle.sizeCharts] : [],
-    combos: bundle.combos ? [...bundle.combos] : [],
+    merchItems: Array.isArray(bundle.merchItems)
+      ? bundle.merchItems.map((item) => ({ ...item }))
+      : [],
+    sizeCharts: Array.isArray(bundle.sizeCharts)
+      ? bundle.sizeCharts.filter((url) => typeof url === "string" && url.trim())
+      : [],
+    combos: Array.isArray(bundle.combos)
+      ? bundle.combos.map((combo) => ({ ...combo }))
+      : [],
   });
   const [editingItemIndex, setEditingItemIndex] = useState(null);
   const [editingComboIndex, setEditingComboIndex] = useState(null);
@@ -93,7 +99,12 @@ export default function BundleEditForm({
       onSetError("At least one merch item is required");
       return;
     }
-    await onSubmit(form);
+    await onSubmit({
+      ...form,
+      sizeCharts: (form.sizeCharts || []).filter(
+        (url) => typeof url === "string" && url.trim()
+      ),
+    });
   };
 
   return (

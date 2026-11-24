@@ -165,7 +165,14 @@ export async function PUT(request, { params }) {
     ];
     for (const field of allowedFields) {
       if (updateData[field] !== undefined) {
-        bundle[field] = updateData[field];
+        if (field === "sizeCharts") {
+          bundle.sizeCharts = updateData.sizeCharts
+            .filter((url) => typeof url === "string" && url.trim())
+            .map((url) => url.trim());
+          bundle.markModified("sizeCharts");
+        } else {
+          bundle[field] = updateData[field];
+        }
       }
     }
 

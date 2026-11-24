@@ -46,7 +46,8 @@ export default function BundleCard({
           <span className="text-gray-500">Combos:</span> {bundle.combos.length}
         </div>
         <div>
-          <span className="text-gray-500">Size Charts:</span> {bundle.sizeCharts.length}
+          <span className="text-gray-500">Size Charts:</span>{" "}
+          {Array.isArray(bundle.sizeCharts) ? bundle.sizeCharts.length : 0}
         </div>
         <div>
           <span className="text-gray-500">Created:</span>{" "}

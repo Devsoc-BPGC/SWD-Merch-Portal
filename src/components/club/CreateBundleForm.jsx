@@ -72,7 +72,12 @@ export default function CreateBundleForm({ onSubmit, loading, onSetError }) {
       onSetError("At least one merch item is required");
       return;
     }
-    const success = await onSubmit(form);
+    const success = await onSubmit({
+      ...form,
+      sizeCharts: (form.sizeCharts || []).filter(
+        (url) => typeof url === "string" && url.trim()
+      ),
+    });
     if (success) {
       setForm({ title: "", description: "", merchItems: [], sizeCharts: [], combos: [] });
       setEditingItemIndex(null);

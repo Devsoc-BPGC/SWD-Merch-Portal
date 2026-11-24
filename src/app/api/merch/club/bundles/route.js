@@ -54,12 +54,18 @@ export async function POST(request) {
 
     await connectDB();
 
+    const normalizedSizeCharts = Array.isArray(sizeCharts)
+      ? sizeCharts
+          .filter((url) => typeof url === "string" && url.trim())
+          .map((url) => url.trim())
+      : [];
+
     const bundle = new MerchBundle({
       club: user._id,
       title: title.trim(),
       description: description?.trim() || "",
       merchItems,
-      sizeCharts,
+      sizeCharts: normalizedSizeCharts,
       combos,
     });
 
